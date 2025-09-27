@@ -4,11 +4,9 @@ import java.util.HashMap;
 public class GetResponse {
     private Center_Display centerDisplay;
     private HashMap<String, String> dictionary = new HashMap<String, String>();
-    private Boolean menu;
     private String bestResponse;
 
     GetResponse(Center_Display centerDisplay) {
-        this.menu = true;
         this.bestResponse = null;
         this.centerDisplay = centerDisplay;
         BuildHashMap();
@@ -20,11 +18,16 @@ public class GetResponse {
     }
 
     public String GenerateResponse(String userInput) {
-        if ((this.bestResponse = dictionary.get(userInput)) != null) {
-            return this.bestResponse;
-        } else {
-            return String.format("Sorry, I don't know how to respond to '%s'. Please try again.", userInput);
+        String lowerInput = userInput.toLowerCase();
+        for (String key : dictionary.keySet()) {
+            if (lowerInput.contains(key.toLowerCase()) || key.toLowerCase().contains(lowerInput)) {
+                this.bestResponse = dictionary.get(key);
+                return this.bestResponse;
+            }
         }
+
+        this.bestResponse = String.format("I'm sorry, I don't understand '%s'. Please speak clearly for better results.", userInput);
+        return this.bestResponse;
     }
 
     public void DisplayMenu() {

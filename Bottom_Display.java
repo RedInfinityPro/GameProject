@@ -10,6 +10,7 @@ public class Bottom_Display {
     public Container cp;
     private Center_Display centerDisplay;
     private GetResponse getResponse;
+    private JTextArea textArea;
 
     Bottom_Display(JFrame parentFrame, Container container, Center_Display centerDisplay, GetResponse getResponse) {
         this.parentFrame = parentFrame;
@@ -19,34 +20,67 @@ public class Bottom_Display {
     }
 
     public void Initialize_Items() {
-        JPanel textArea_panel = new JPanel();
-        textArea_panel.setBackground(Main.PANEL_COLOR);
-        textArea_panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Main.BORDER_COLOR, 2),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
-        JTextArea textArea = new JTextArea();
+        JPanel bottomPanel = new JPanel(new BorderLayout(10, 0)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                // Create gradient background
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, new Color(25, 25, 30),
+                    0, getHeight(), new Color(35, 35, 40)
+                );
+                g2.setPaint(gradient);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                // Add top border glow
+                g2.setColor(Main.ORANGE_COLOR);
+                g2.drawLine(0, 0, getWidth(), 0);
+                g2.setColor(new Color(Main.ORANGE_COLOR.getRed(), Main.ORANGE_COLOR.getGreen(), Main.ORANGE_COLOR.getBlue(), 100));
+                g2.drawLine(0, 1, getWidth(), 1);
+                g2.dispose();
+            }
+        };
+        bottomPanel.setPreferredSize(new Dimension(0, 60));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        bottomPanel.setOpaque(false);
+
+        textArea = new JTextArea() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Background with gradient
+                GradientPaint gradient = new GradientPaint(
+                     0, 0, new Color(20, 20, 25),
+                     0, getHeight(), new Color(30, 30, 35)
+                );
+                g2.setPaint(gradient);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                // Glow border
+                g2.setColor(isFocusOwner() ? Main.ORANGE_COLOR : Main.BLUE_COLOR);
+                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 10, 10);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        textArea.setFont(Main.STYLE_FONT);
+        textArea.setForeground(Color.WHITE);
+        textArea.setCaretColor(Color.WHITE);
+        textArea.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        textArea.setOpaque(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setBackground(Color.DARK_GRAY);
-        textArea.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Main.BORDER_COLOR, 2),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
-        textArea.setFont(Main.BASIC_FONT);
-        textArea.setForeground(Color.WHITE);
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setPreferredSize(new Dimension(320, 100));
         scrollPane.setBorder(null);
         // button
         SendButton send_button = new SendButton(">", textArea);
-        textArea_panel.add(scrollPane, BorderLayout.CENTER); // west
-        textArea_panel.add(send_button, BorderLayout.EAST);
-        cp.add(textArea_panel, BorderLayout.SOUTH);
+        bottomPanel.add(scrollPane, BorderLayout.CENTER); // west
+        bottomPanel.add(send_button, BorderLayout.EAST);
+        cp.add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public class SendButton extends JButton implements ActionListener {
-
         private JTextArea textArea;
         public String output;
 
