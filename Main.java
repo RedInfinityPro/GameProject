@@ -3,14 +3,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Random;
 import javax.swing.*;
 
 public class Main extends JFrame {
-    public  Random random = new Random();
+
+    public Random random = new Random();
     private Container cp;
     private static final int WINDOW_WIDTH = 960;
     private static final int WINDOW_HEIGHT = 540;
+    private GetResponse getResponse;
+    private Center_Display center_display;
     /// style
     public static final Font BASIC_FONT = new Font("Consolas", Font.PLAIN, 11);
     public static final Font STYLE_FONT = new Font("Consolas", Font.PLAIN, 14);
@@ -31,21 +36,36 @@ public class Main extends JFrame {
         setContentPane(cp);
         setContentPane((JPanel) cp);
         ((JPanel) cp).setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        // Initialize the response system with enhanced features
+        initialize_chat(center_display);
         // items
         Center_Display center_display = new Center_Display(this, cp);
         center_display.Initialize_Items();
-        GetResponse getResponse = new GetResponse(center_display);
         Bottom_Display bottom_display = new Bottom_Display(this, cp, center_display, getResponse);
         bottom_display.Initialize_Items();
-        // Add welcome message
-        // Timer timer = new Timer(1000, e -> {
-        //     String welcomeMsg = getResponse.GenerateResponse("Welcome");
-        //     getResponse.DisplayMenu();
-        // });
-        // timer.setRepeats(false);
-        // timer.start();
+        // Initialize the response system with enhanced features
+        displayBotResponse("menu", center_display);
         // Visible
         setVisible(true);
+    }
+
+    public void initialize_chat(Center_Display center_display) {
+        this.getResponse = new GetResponse(center_display);
+    }
+
+    public void refreshDisplay(Center_Display center_display) {
+        center_display.centerDisplay_panel.revalidate();
+        center_display.centerDisplay_panel.repaint();
+    }
+
+    private void displayBotResponse(String userInput, Center_Display center_display) {
+        String botReply = getResponse.GenerateResponse(userInput);
+        center_display.sourceList.add("l");
+        center_display.bubble_text.add(botReply);
+        Center_Display.RowPanel_Panel rowPanel = center_display.new RowPanel_Panel(Arrays.asList("l"), Arrays.asList(botReply));
+        center_display.centerDisplay_panel.add(rowPanel.apply_RawPanel());
+        center_display.centerDisplay_panel.revalidate();
+        center_display.centerDisplay_panel.repaint();
     }
 
     public class AnimatedCircuitPanel extends JPanel {
@@ -130,7 +150,7 @@ public class Main extends JFrame {
                 for (int j = startY; j <= getHeight() + GRID_SIZE; j += GRID_SIZE) {
                     int max = 3;
                     int min = 1;
-                    pulsesSpeed = (int)((Math.random() * (max - min)) + min);
+                    pulsesSpeed = (int) ((Math.random() * (max - min)) + min);
                     // Calculate pulse position along horizontal line
                     int pulsePos = (offset * pulsesSpeed) % (GRID_SIZE - CIRCUIT_SIZE);
                     int pulseX = i + CIRCUIT_SIZE + pulsePos;

@@ -11,6 +11,7 @@ public class Center_Display {
     static List<String> sourceList = new ArrayList<>();
     static List<String> bubble_text = new ArrayList<>();
     public JPanel centerDisplay_panel;
+    public JScrollPane scrollPane;
 
     Center_Display(JFrame parentFrame, Container container) {
         this.parentFrame = parentFrame;
@@ -37,7 +38,7 @@ public class Center_Display {
         };
         centerDisplay_panel.setLayout(new BoxLayout(centerDisplay_panel, BoxLayout.Y_AXIS));
         centerDisplay_panel.setBackground(Main.PANEL_COLOR);
-        JScrollPane scrollPane = new JScrollPane(centerDisplay_panel) {
+        scrollPane = new JScrollPane(centerDisplay_panel) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -68,7 +69,7 @@ public class Center_Display {
         private List<String> targets_left = Arrays.asList("l", "L", "Left");
         private List<String> targets_right = Arrays.asList("r", "R", "Right");
 
-        RowPanel_Panel(int amount, List<String> sourceList, List<String> bubble_text) {
+        RowPanel_Panel(List<String> sourceList, List<String> bubble_text) {
             this.sourceList = sourceList;
             this.bubble_text = bubble_text;
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

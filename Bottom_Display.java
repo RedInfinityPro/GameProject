@@ -6,16 +6,17 @@ import java.util.Arrays;
 import javax.swing.*;
 
 public class Bottom_Display {
+
     public JFrame parentFrame;
     public Container cp;
-    private Center_Display centerDisplay;
-    private GetResponse getResponse;
+    private Center_Display center_display;
+    public GetResponse getResponse;
     private JTextArea textArea;
-
-    Bottom_Display(JFrame parentFrame, Container container, Center_Display centerDisplay, GetResponse getResponse) {
+    
+    Bottom_Display(JFrame parentFrame, Container container, Center_Display center_display, GetResponse getResponse) {
         this.parentFrame = parentFrame;
         this.cp = container;
-        this.centerDisplay = centerDisplay;
+        this.center_display = center_display;
         this.getResponse = getResponse;
     }
 
@@ -27,8 +28,8 @@ public class Bottom_Display {
                 Graphics2D g2 = (Graphics2D) g.create();
                 // Create gradient background
                 GradientPaint gradient = new GradientPaint(
-                    0, 0, new Color(25, 25, 30),
-                    0, getHeight(), new Color(35, 35, 40)
+                        0, 0, new Color(25, 25, 30),
+                        0, getHeight(), new Color(35, 35, 40)
                 );
                 g2.setPaint(gradient);
                 g2.fillRect(0, 0, getWidth(), getHeight());
@@ -51,14 +52,14 @@ public class Bottom_Display {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 // Background with gradient
                 GradientPaint gradient = new GradientPaint(
-                     0, 0, new Color(20, 20, 25),
-                     0, getHeight(), new Color(30, 30, 35)
+                        0, 0, new Color(20, 20, 25),
+                        0, getHeight(), new Color(30, 30, 35)
                 );
                 g2.setPaint(gradient);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                 // Glow border
                 g2.setColor(isFocusOwner() ? Main.ORANGE_COLOR : Main.BLUE_COLOR);
-                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 10, 10);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
                 g2.dispose();
                 super.paintComponent(g);
             }
@@ -81,8 +82,8 @@ public class Bottom_Display {
     }
 
     public class SendButton extends JButton implements ActionListener {
+
         private JTextArea textArea;
-        public String output;
 
         SendButton(String text, JTextArea textArea) {
             super(text);
@@ -97,33 +98,29 @@ public class Bottom_Display {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
+            String message = this.textArea.getText().toString().trim();
             try {
-                if (!(this.textArea.getText().equals(""))) {
-                    set_OutputString(this.textArea.getText());
+                if (!message.isEmpty()) {
                     // keep track in static lists
-                    Center_Display.sourceList.add("r");
-                    Center_Display.bubble_text.add(this.output.toString());
-                    // create one new row bubble and add it to the panel
-                    Center_Display.RowPanel_Panel rowPanel = centerDisplay.new RowPanel_Panel(1, Arrays.asList("r"), Arrays.asList(this.output));
-                    centerDisplay.centerDisplay_panel.add(rowPanel.apply_RawPanel());
-                    // refresh UI
-                    centerDisplay.centerDisplay_panel.revalidate();
-                    centerDisplay.centerDisplay_panel.repaint();
-                    getResponse.GenerateResponse(this.textArea.getText());
-                    getResponse.DisplayMenu();
+                    center_display.sourceList.add("r");
+                    center_display.bubble_text.add(message);
+                    Center_Display.RowPanel_Panel userPanel = center_display.new RowPanel_Panel(Arrays.asList("r"), Arrays.asList(message));
+                    center_display.centerDisplay_panel.add(userPanel.apply_RawPanel());
+                    // Get bot reply
+                    String botReply = getResponse.GenerateResponse(message);
+                    center_display.sourceList.add("l");
+                    center_display.bubble_text.add(botReply);
+                    Center_Display.RowPanel_Panel botPanel = center_display.new RowPanel_Panel(Arrays.asList("l"), Arrays.asList(botReply));
+                    center_display.centerDisplay_panel.add(botPanel.apply_RawPanel());
+                    // paint
+                    center_display.centerDisplay_panel.revalidate();
+                    center_display.centerDisplay_panel.repaint();
+                    center_display.scrollPane.getVerticalScrollBar().setValue(center_display.scrollPane.getVerticalScrollBar().getMaximum());
                 }
             } catch (Exception e) {
                 System.err.println(e);
             }
             this.textArea.setText("");
-        }
-
-        public void set_OutputString(String new_output) {
-            this.output = new_output;
-        }
-
-        public String get_OutputString() {
-            return this.output;
         }
     }
 }
