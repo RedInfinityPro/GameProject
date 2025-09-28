@@ -62,8 +62,8 @@ public class GetResponse {
     
     private void buildDictionary() {
         // Basic greetings and responses
-        addResponse(Arrays.asList("help", "commands", "guide"), "Available Commands:");
-        addResponse(Arrays.asList("menu"), new ResponseData("Main Menu:", false, "menu_input", true));
+        addResponse(Arrays.asList("commands"), "Available Commands: [commands may be case sensitive] 'menu' allows you to play the game.");
+        addResponse(Arrays.asList("menu"), new ResponseData("Welcome to the Main Menu! Try 'commands' command to see what commands are available to you", false, "menu_input", true));
     }
     
     private void setupConversationStates() {

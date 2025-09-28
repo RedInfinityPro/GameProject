@@ -9,7 +9,6 @@ import java.util.Random;
 import javax.swing.*;
 
 public class Main extends JFrame {
-
     public Random random = new Random();
     private Container cp;
     private static final int WINDOW_WIDTH = 960;
